@@ -33,7 +33,7 @@ Create `.env` and fill it as `.env.example`. `token` and `channelId` are necessa
 
 # Extending to post Counter-Strike blog posts
 
-If you wish to track [Counter-Strike blog posts](https://www.counter-strike.net/news) too, you may extend the application to do so easily! Event type 12 is used for patch notes, others are blog posts. You'll have to implement your own logic for blog post handling in `fetchPatchNotes`. To do so, replace `if (event.event_type !== 12) continue;`
+If you wish to track [Counter-Strike blog posts](https://www.counter-strike.net/news) too, you may extend the application to do so easily! Event type 12 is used for patch notes, others are blog posts. You'll have to implement your own logic for blog post handling in `fetchPatchNotes`. To do so, replace `if (event.event_type !== 12) continue;` with
 
 ```javascript
 if (event.event_type !== 12) {
