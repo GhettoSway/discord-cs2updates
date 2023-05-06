@@ -6,7 +6,7 @@ Simple discord bot that posts new Counter-Strike 2 patch notes to your discord s
 
 ![Demo](demo.png)
 
-# Requirments
+# Requirements
 
 [Node.js](https://nodejs.org/en) version 16.9 or higher
 
@@ -33,11 +33,11 @@ Create `.env` and fill it as `.env.example`. `token` and `channelId` are necessa
 
 # Extending to post Counter-Strike blog posts
 
-If you wish to track [Counter-Strike blog posts](https://www.counter-strike.net/news) too, you may extend the application to do so easily! In `fetchPatchNotes` function replace `if (event.event_type === 13) continue;` with
+If you wish to track [Counter-Strike blog posts](https://www.counter-strike.net/news) too, you may extend the application to do so easily! Event type 12 is used for patch notes, others are blog posts. You'll have to implement your own logic for blog post handling in `fetchPatchNotes`. To do so, replace `if (event.event_type !== 12) continue;`
 
 ```javascript
-if (event.event_type === 13) {
-	// Handle blog post
+if (event.event_type !== 12) {
+	// handle blog post
 }
 ```
 
