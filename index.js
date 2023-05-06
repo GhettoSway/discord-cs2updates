@@ -23,7 +23,7 @@ async function fetchPatchNotes() {
 		'?clan_accountid=0',
 		'&appid=730',
 		'&offset=0',
-		'&count=2', // 2 to make sure we fetch patch notes (in theory 1 could result only blogpost being returned)
+		'&count=10', // make sure we surely get patch notes, api has other data too that could override
 		'&l=english',
 		'&origin=https://www.counter-strike.net',
 	].join('');
@@ -34,32 +34,33 @@ async function fetchPatchNotes() {
 
 		for (const event of resData.events) {
 			/* 
-             after some testing/research it seems that
-			 event_type 12 = patch notes ( https://www.counter-strike.net/news/updates )
-			 event_type 13 = blogpost ( https://www.counter-strike.net/news )
+			 after some testing/research it seems that
+             event_type 12 = patch notes ( https://www.counter-strike.net/news/updates )
             */
 
-			if (event.event_type === 13) continue;
+			if (event.event_type !== 12) continue;
 
 			data.description = parsePatchNoteBody(event.announcement_body.body);
 			data.title = event.announcement_body.headline;
 			data.release = event.announcement_body.posttime;
+
+			// break the loop, since we only want the latest update
+			break;
 		}
 	} catch (error) {
 		data.error = true;
-		data.description = `fetch failed with status code ${error.response.status}, err msg: ${error.response.data.err_msg}`;
+		data.description = `fetch failed with status code ${error.response?.status}, err msg: ${error.response?.data.err_msg}`;
 	}
 
 	return data;
 }
 
 function parsePatchNoteBody(text) {
-	const imgTagRegex = /\[img\]([^\]]+)\[\/img\]/; // regular expression to match  [img]...[/img] tags
+	const tagRegex = /\[([a-z0-9]+)[^\]]*\](.*?)\[\/\1\]/gi; // regular expression to match [tag]...[/tag]
 
-	// prettier-ignore
 	return text
-		.replace(imgTagRegex, '')      // remove the [img]...[/img] tags from the text argument
-		.trim()                        // remove extra line breaks (in case img was at the bgn or at the end)
+		.replace(tagRegex, '')
+		.trim()
 		.replace(/[\r\n]{2,}/g, '\n'); // replace all multiple line breaks (\n+\n) with one line break
 }
 
