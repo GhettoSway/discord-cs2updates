@@ -23,7 +23,7 @@ async function fetchPatchNotes() {
 		'?clan_accountid=0',
 		'&appid=730',
 		'&offset=0',
-		'&count=10', // make sure we surely get patch notes, api has other data too that could override
+		'&count=10',
 		'&l=english',
 		'&origin=https://www.counter-strike.net',
 	].join('');
@@ -56,12 +56,11 @@ async function fetchPatchNotes() {
 }
 
 function parsePatchNoteBody(text) {
-	const tagRegex = /\[([a-z0-9]+)[^\]]*\](.*?)\[\/\1\]/gi; // regular expression to match [tag]...[/tag]
-
 	return text
-		.replace(tagRegex, '')
+		.replace(/\[\/?[a-zA-Z]+\]/g, '') // remove [tag] ... [/tag]
+		.replace(/\[\*\]/g, '-') // replace [*] with -
 		.trim()
-		.replace(/[\r\n]{2,}/g, '\n'); // replace all multiple line breaks (\n+\n) with one line break
+		.replace(/[\r\n]{2,}/g, '\n\n'); // replace multiple line breaks with 2 line breaks
 }
 
 async function checkForUpdate(client) {
